@@ -1,50 +1,49 @@
+
 name: Run audio analysis
 
 on:
   push:
-    branches: [main]
-    paths-ignore:
-      - "outputs/**"
-      - "README.md"
+    paths:
+      - '*.wav'
+      - 'audio_analysis.py'
+      - 'requirements.txt'
+      - '.github/workflows/run-analysis.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  analyse:
+  analyze:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Get the code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: pip
+          python-version: '3.11'
 
-      - name: Install libraries
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run the analysis
-        run: python audio_analysis.py
-
-      - name: Show the results on the run page
+      - name: Analyze audio
         run: |
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          cat outputs/results.txt >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          WAV=$(find . -maxdepth 1 -name '*.wav' ! -name 'filtered.wav' ! -name 'test_signal.wav' | head -n 1)
 
-      - name: Keep the plots as a download
+          if [ -n "$WAV" ]; then
+            echo "Using uploaded audio: $WAV"
+            python audio_analysis.py --input "$WAV"
+          else
+            echo "No input WAV found. Using built-in sample."
+            python audio_analysis.py
+          fi
+
+      - name: Upload analysis outputs
         uses: actions/upload-artifact@v4
         with:
-          name: analysis-outputs
+          name: analysis-output
           path: outputs/
-
-      - name: Save the plots back into the repository
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add outputs
-          git diff --staged --quiet || (git commit -m "Update outputs from automatic run" && git push)
+          if-no-files-found: error
