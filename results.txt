@@ -1,0 +1,27 @@
+AUDIO SIGNAL ANALYSIS - RESULTS
+-------------------------------
+Signal            : built-in test signal
+Sampling rate     : 22050 Hz
+Duration          : 3.00 s (66150 samples)
+Nyquist frequency : 11025 Hz
+Filter            : Butterworth low-pass, order 5, cutoff 1500 Hz
+STFT              : window 2048 samples (93 ms), hop 512 samples, frequency step 10.8 Hz
+Energy above cutoff reduced by 33 dB
+MFCC shape        : 13 coefficients x 130 frames
+
+Strongest spectral peaks (Hann window):
+     554.3 Hz    -11.7 dB
+    4000.0 Hz    -16.5 dB
+     659.3 Hz    -18.3 dB
+    1108.7 Hz    -22.2 dB
+     440.0 Hz    -26.1 dB
+    1318.7 Hz    -29.0 dB
+     880.0 Hz    -36.6 dB
+
+Self-check on the test signal:
+  peak near  440.00 Hz found : PASS
+  peak near  554.37 Hz found : PASS
+  peak near  659.25 Hz found : PASS
+  peak near 4000.00 Hz found : PASS
+  4 kHz whine reduced by 94 dB (needs > 60) : PASS
+  RESULT: ALL CHECKS PASSED
